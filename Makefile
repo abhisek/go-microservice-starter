@@ -1,17 +1,24 @@
-all: clean_create_dir pet_service
+BUILD_OUTPUT:=microservice_starter
 
-clean_create_dir:
-	-rm -rf ./gen
-	-mkdir -p ./gen
+all: clean build
 
-pet_service:
+build: proto app
+
+proto:
 	protoc -I ./contracts/services/pet_service/ \
 		-I ./contracts/lib/ -I ./contracts/lib/protoc-gen-validate \
 		--go_out=./gen/ \
 		--go-grpc_out=./gen/ \
 		--validate_out="lang=go:./gen/" \
+		--go_opt=paths=source_relative \
+		--go-grpc_opt=paths=source_relative \
+		--validate_opt=paths=source_relative \
 		./contracts/services/pet_service/pet_service.proto
 
+app:
+	go build -o ${BUILD_OUTPUT}
+
 clean:
-	-rm -rf pet_service
-	-rm -rf gen
+	-rm -rf ${BUILD_OUTPUT}
+	-rm -rf ./gen
+	-mkdir -p ./gen
