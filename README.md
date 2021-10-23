@@ -1,2 +1,2 @@
-# go-microservice-starter
+# Go Microservice Starter
 An opinionated Microservice starter in Go
