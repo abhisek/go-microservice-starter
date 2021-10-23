@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package services;
+option go_package = "github.com/abhisek/go-microservice-starter/services/pet_service";
+
+import "validate/validate.proto";
+import "google/api/annotations.proto";
+
+enum Status {
+  INVALID = 0;
+  AVAILABLE = 10;
+  PENDING = 20;
+  SOLD = 30;
+}
+
+message Tag {
+  string name = 2 [
+    (validate.rules).string = {
+      min_len: 5,
+      max_len: 100,
+      pattern: "^[a-zA-Z0-9]+$"
+    }
+  ];
+}
+
+message PhotoURL {
+  string photoUrl = 1 [(validate.rules).string.uri = true];
+}
+
+message Category {
+  string name = 2 [
+        (validate.rules).string = {
+      min_len: 5,
+      max_len: 100,
+      pattern: "^[a-zA-Z0-9]+$"
+    }
+  ];
+}
+
+message PetInfo {
+  Category category = 2 [(validate.rules).message.required = true];
+  Status status = 3 [(validate.rules).enum.defined_only = true];
+  repeated PhotoURL photoUrls = 4 [(validate.rules).repeated = { ignore_empty: true }];
+  repeated Tag tags = 5 [(validate.rules).repeated = { ignore_empty: true }];
+}
+
+message Pet {
+  string id = 1 [(validate.rules).string.uuid = true];
+  PetInfo pet = 2 [(validate.rules).message.required = true];
+}
+
+message PetId {
+  string id = 1 [(validate.rules).string.uuid = true];
+}
+
+message FindByStatusRequest {
+  Status status = 1 [(validate.rules).enum.defined_only = true];
+}
+
+message PetCollection {
+  repeated Pet pets = 1;
+}
+
+service PetService {
+  rpc CreatePet(PetInfo) returns(Pet) {
+    option (google.api.http) = {
+      post: "/pet_service/pets"
+      body: "*"
+    };
+  }
+
+  rpc GetPet(PetId) returns(Pet) {
+    option (google.api.http) = {
+      get: "/pet_service/pets/{id}"
+    };
+  }
+
+  rpc FindByStatus(FindByStatusRequest) returns(PetCollection) {
+    option (google.api.http) = {
+      post: "/pet_services/pets/findByStatus"
+      body: "*"
+    };
+  }
+
+  rpc DeletePet(PetId) returns(Pet) {
+    option (google.api.http) = {
+      delete: "/pet_service/pets/{id}"
+    };
+  }
+}
