@@ -11,7 +11,7 @@ Start the service:
 
 ```bash
 docker build -t go-microservice-start .
-docker run --rm -it -p 8080:8080 go-microservice-start ./microservice_starter
+docker run --rm -it -p 8080:8080 go-microservice-start ./go-microservice-starter
 ```
 
 Interact with the service using [grpcui](https://github.com/fullstorydev/grpcui):

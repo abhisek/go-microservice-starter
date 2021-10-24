@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/envoyproxy/protoc-gen-validate v0.6.2
+	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.2.1
 	google.golang.org/genproto v0.0.0-20211021150943-2b146023228c

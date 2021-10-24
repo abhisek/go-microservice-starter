@@ -14,8 +14,28 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_validator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
+
 	log "github.com/sirupsen/logrus"
 )
+
+func buildServer() *grpc.Server {
+	server := grpc.NewServer(
+		grpc.StreamInterceptor(
+			grpc_middleware.ChainStreamServer(
+				grpc_validator.StreamServerInterceptor(),
+			),
+		),
+		grpc.UnaryInterceptor(
+			grpc_middleware.ChainUnaryServer(
+				grpc_validator.UnaryServerInterceptor(),
+			),
+		),
+	)
+
+	return server
+}
 
 func serve(_ *cobra.Command, args []string) {
 	_, cancel := context.WithCancel(context.Background())
@@ -33,7 +53,7 @@ func serve(_ *cobra.Command, args []string) {
 		log.Fatalf("Failed to create pet service instance: %v", err)
 	}
 
-	server := grpc.NewServer()
+	server := buildServer()
 	api.RegisterPetServiceServer(server, service)
 
 	reflection.Register(server)

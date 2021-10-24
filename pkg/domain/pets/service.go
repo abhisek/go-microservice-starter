@@ -17,11 +17,6 @@ func NewPetService() (*petServer, error) {
 }
 
 func (server *petServer) CreatePet(context context.Context, info *api.PetInfo) (*api.Pet, error) {
-	if err := info.ValidateAll(); err != nil {
-		return &api.Pet{}, err
-	}
-
 	log.Debug("Creating pet..")
-
 	return &api.Pet{}, nil
 }

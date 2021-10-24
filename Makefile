@@ -1,4 +1,4 @@
-BUILD_OUTPUT:=microservice_starter
+BUILD_OUTPUT:=go-microservice-starter
 
 all: clean build
 
